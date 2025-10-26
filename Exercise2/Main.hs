@@ -298,6 +298,33 @@ prop_itemTotal_4 =
 prop_itemTotal_5 =
     itemTotal [("c", 3.3), ("a", 1), ("b", 2), ("b", 3), ("a", 1)] == [("a", 2), ("b", 5), ("c", 3.3)]
 
+itemDiscount :: String -> Integer -> [(String,Float)] -> [(String,Float)]
+itemDiscount _ _ [] = []
+itemDiscount item disc [(y0, p0)]
+    | item == y0 = [(y0, p0 * (fromIntegral disc / 100))]
+    | otherwise = [(y0, p0)]
+itemDiscount item disc ((y0, p0):xs)
+    | item == y0 = (y0, p0 * (fromIntegral disc / 100)):(itemDiscount item disc xs)
+    | otherwise = (y0, p0):(itemDiscount item disc xs)
+
+prop_itemDiscount_0 =
+    itemDiscount "a" 50 [] == [] 
+
+prop_itemDiscount_1 =
+    itemDiscount "a" 50 [("a", 2), ("a", 100)] == [("a", 1), ("a", 50)] 
+
+prop_itemDiscount_2 =
+    itemDiscount "b" 50 [("a", 2), ("b", 100)] == [("a", 2), ("b", 50)] 
+
+prop_itemDiscount_3 =
+    itemDiscount "c" 50 [("a", 2), ("b", 100)] == [("a", 2), ("b", 100)] 
+
+prop_itemDiscount_4 =
+    itemDiscount "a" 20 [("a", 2), ("b", 100)] == [("a", 0.4), ("b", 100)] 
+
+prop_itemDiscount_5 =
+    itemDiscount "a" 20 [("c", 100), ("a", 2), ("b", 100)] == [("c", 100), ("a", 0.4), ("b", 100)] 
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_average_0
@@ -381,4 +408,9 @@ main = do
     quickCheck prop_itemTotal_4
     quickCheck prop_itemTotal_5
 
-    putStrLn (show (itemTotal [("c", 3.3), ("a", 1), ("b", 2), ("b", 3), ("a", 1)]))
+    quickCheck prop_itemDiscount_0
+    quickCheck prop_itemDiscount_1
+    quickCheck prop_itemDiscount_2
+    quickCheck prop_itemDiscount_3
+    quickCheck prop_itemDiscount_4
+    quickCheck prop_itemDiscount_5
