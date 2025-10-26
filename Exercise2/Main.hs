@@ -97,6 +97,63 @@ prop_is_prime_6 =
 prop_is_prime_7 = 
     is_prime 1000 == False
 
+-- Exercise 3
+lengthString :: String -> Int
+lengthString [] = 0
+lengthString (x:xs) = 1 + lengthString xs
+
+prefix :: String -> String -> Bool
+prefix pr st
+    | lengthString st < lengthString pr = False
+    | otherwise = pr == take (lengthString pr) st 
+
+prop_prefix_0 = 
+    prefix "some" "another" == False
+
+prop_prefix_1 = 
+    prefix "some" "a" == False
+
+prop_prefix_2 = 
+    prefix "some" "some" == True
+
+prop_prefix_3 = 
+    prefix "sm" "some" == False
+
+prop_prefix_4 = 
+    prefix "" "some" == True
+
+prop_prefix_5 = 
+    prefix "" "" == True
+
+prop_prefix_6 = 
+    prefix "some" "" == False
+
+substring :: String -> String -> Bool
+substring sub st 
+    | st == "" = False
+    | otherwise = prefix sub st || substring sub (drop 1 st)
+
+prop_substring_0 = 
+    substring "some" "" == False
+
+prop_substring_1 = 
+    substring "some" "asomea" == True
+
+prop_substring_2 = 
+    substring "some" "bbbbbbbbbbbbbbbbbbbbbbsomeb" == True
+
+prop_substring_3 = 
+    substring "some" "somebbbbbbbbbbbbbbbbbbb" == True
+
+prop_substring_4 = 
+    substring "some" "some" == True
+
+prop_substring_5 = 
+    substring "some" "ome" == False
+
+prop_substring_6 = 
+    substring "" "ome" == True
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_average_0
@@ -124,4 +181,21 @@ main = do
     quickCheck prop_is_prime_6
     quickCheck prop_is_prime_7
 
-    putStrLn (show (divides0 24))
+    -- Exercise 3 tests
+    quickCheck prop_prefix_0
+    quickCheck prop_prefix_1
+    quickCheck prop_prefix_2
+    quickCheck prop_prefix_3
+    quickCheck prop_prefix_4
+    quickCheck prop_prefix_5
+    quickCheck prop_prefix_6
+
+    quickCheck prop_substring_0
+    quickCheck prop_substring_1
+    quickCheck prop_substring_2
+    quickCheck prop_substring_3
+    quickCheck prop_substring_4
+    quickCheck prop_substring_5
+    quickCheck prop_substring_6
+
+    putStrLn (show (substring "" "ome"))
