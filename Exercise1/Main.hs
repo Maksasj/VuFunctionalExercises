@@ -7,7 +7,7 @@ nAnd0 :: Bool -> Bool -> Bool
 nAnd0 x y = not (x && y)
 
 nAnd1 :: Bool -> Bool -> Bool
-nAnd1 True True = False
+nAnd1 True x = not x
 nAnd1 _ _ = True
 
 nAnd2 :: Bool -> Bool -> Bool
@@ -157,6 +157,7 @@ prop_prod_4 =
     prod 1 1 == 1
 
 fact :: Integer -> Integer
+fact 0 = 1
 fact x = prod 1 x
 
 prop_fact_0 x 
@@ -191,7 +192,7 @@ main = do
     quickCheck prop_nRoots_0_1
     quickCheck prop_nRoots_0_2
 
-    -- quickCheck prop_nRoots_error 
+    quickCheck prop_nRoots_error 
 
     -- Exercise 5 tests
     quickCheck prop_power2_0
