@@ -252,6 +252,52 @@ prop_capitalise_4 =
 prop_capitalise_5 =
     capitalise "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" == "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+-- Exercise 6
+addToKey :: [(String,Float)] -> (String,Float) -> [(String,Float)]
+addToKey [] x = [x]
+addToKey [(y0, p0)] (y1, p1)
+    | y0 == y1 = [(y0, p0 + p1)]
+    | otherwise = [(y0, p0), (y1, p1)]
+addToKey ((y0, p0):xs) (y1, p1)
+    | xs == [] = []
+    | y0 == y1 = (y0, p0 + p1):xs  
+    | otherwise = (y0, p0):(addToKey xs (y1, p1))
+
+prop_addToKey_0 =
+    addToKey [] ("a", 1) == [("a", 1)] 
+
+prop_addToKey_1 =
+    addToKey [("a", 2)] ("b", 1) == [("a", 2), ("b", 1)] 
+
+prop_addToKey_2 =
+    addToKey [("b", 1), ("c", -1), ("d", 3.3)] ("a", 2) == [("b", 1), ("c", -1), ("d", 3.3), ("a", 2)] 
+
+prop_addToKey_3 =
+    addToKey [("a", 2), ("b", 1), ("c", 1)] ("b", -5) == [("a", 2), ("b", -4), ("c", 1)] 
+
+itemTotal :: [(String,Float)] -> [(String,Float)]
+itemTotal [] = []
+itemTotal [x] = [x]
+itemTotal (x:xs) = (addToKey (itemTotal xs) x) 
+
+prop_itemTotal_0 =
+    itemTotal [] == []
+
+prop_itemTotal_1 =
+    itemTotal [("a", 1)] == [("a", 1)]
+
+prop_itemTotal_2 =
+    itemTotal [("a", 1), ("a", 1)] == [("a", 2)]
+
+prop_itemTotal_3 =
+    itemTotal [("a", 1), ("b", 3), ("a", 1)] == [("a", 2), ("b", 3 )]
+
+prop_itemTotal_4 =
+    itemTotal [("a", 1), ("b", 2), ("b", 3), ("a", 1)] == [("a", 2), ("b", 5)]
+
+prop_itemTotal_5 =
+    itemTotal [("c", 3.3), ("a", 1), ("b", 2), ("b", 3), ("a", 1)] == [("a", 2), ("b", 5), ("c", 3.3)]
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_average_0
@@ -322,4 +368,17 @@ main = do
     quickCheck prop_capitalise_4
     quickCheck prop_capitalise_5
 
-    putStrLn (show (substring "" "ome"))
+    -- Exercise 6 tests
+    quickCheck prop_addToKey_0
+    quickCheck prop_addToKey_1
+    quickCheck prop_addToKey_2
+    quickCheck prop_addToKey_3
+
+    quickCheck prop_itemTotal_0
+    quickCheck prop_itemTotal_1
+    quickCheck prop_itemTotal_2
+    quickCheck prop_itemTotal_3
+    quickCheck prop_itemTotal_4
+    quickCheck prop_itemTotal_5
+
+    putStrLn (show (itemTotal [("c", 3.3), ("a", 1), ("b", 2), ("b", 3), ("a", 1)]))
