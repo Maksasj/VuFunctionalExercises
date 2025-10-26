@@ -154,6 +154,67 @@ prop_substring_5 =
 prop_substring_6 = 
     substring "" "ome" == True
 
+-- Exercise 4
+removeFirst :: [Integer] -> Integer -> [Integer]
+removeFirst [] _ = []
+removeFirst (y:ys) x
+    | x == y = ys
+    | otherwise = y:(removeFirst ys x)
+
+prop_removeFirst_0 =
+    removeFirst [] 10 == []
+
+prop_removeFirst_1 = 
+    removeFirst [10] 10 == []
+
+prop_removeFirst_2 =
+    removeFirst [10, 10] 10 == [10]
+
+prop_removeFirst_3 =
+    removeFirst [1, 2, 3, 4, 5, 5, 6] 5 == [1, 2, 3, 4, 5, 6]
+
+prop_removeFirst_4 = 
+    removeFirst [5, 2, 3, 4, 5, 5, 6] 5 == [ 2, 3, 4, 5, 5, 6]
+
+permut :: [Integer] -> [Integer] -> Bool
+permut [] [] = False
+permut [_] [] = False
+permut [] [_] = False
+permut [a] [b] = a == b
+permut x y 
+    | length(x) == length(y) = permut (drop 1 x) (removeFirst y (head x))
+    | otherwise = False
+
+prop_permut_0 =
+    permut [] [] == False
+
+prop_permut_1 =
+    permut [1] [1] == True
+
+prop_permut_2 =
+    permut [1] [2] == False
+
+prop_permut_3 =
+    permut [1, 1] [2] == False
+
+prop_permut_4 =
+    permut [1, 1] [1, 1] == True
+
+prop_permut_5 =
+    permut [2, 1] [1, 2] == True
+
+prop_permut_6 =
+    permut [1, 2, 3, 4, 5, 6] [6, 5, 4, 3, 2, 1] == True
+
+prop_permut_7 =
+    permut [1, 2, 3, 4, 5, 6] [6, 5, 4, 3, 7, 1] == False
+
+prop_permut_8 =
+    permut [1, 2, 3, 4, 5, 6] [6, 5, 4, 3, 1] == False
+
+prop_permut_9 =
+    permut [4, 5, 6] [6, 5, 4, 3, 1] == False
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_average_0
@@ -197,5 +258,23 @@ main = do
     quickCheck prop_substring_4
     quickCheck prop_substring_5
     quickCheck prop_substring_6
+
+    -- Exercise 4 tests
+    quickCheck prop_removeFirst_0
+    quickCheck prop_removeFirst_1
+    quickCheck prop_removeFirst_2
+    quickCheck prop_removeFirst_3
+    quickCheck prop_removeFirst_4
+
+    quickCheck prop_permut_0
+    quickCheck prop_permut_1
+    quickCheck prop_permut_2
+    quickCheck prop_permut_3
+    quickCheck prop_permut_4
+    quickCheck prop_permut_5
+    quickCheck prop_permut_6
+    quickCheck prop_permut_7
+    quickCheck prop_permut_8
+    quickCheck prop_permut_9
 
     putStrLn (show (substring "" "ome"))
