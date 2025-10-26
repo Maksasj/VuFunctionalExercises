@@ -215,6 +215,43 @@ prop_permut_8 =
 prop_permut_9 =
     permut [4, 5, 6] [6, 5, 4, 3, 1] == False
 
+-- Exercise 5
+isLowerCaseAlpha :: Char -> Bool
+isLowerCaseAlpha x = x >= 'a' && x <= 'z'
+
+isUpperCaseAlpha :: Char -> Bool
+isUpperCaseAlpha x = x >= 'A' && x <= 'Z'
+
+isAlphabet :: Char -> Bool
+isAlphabet x = isLowerCaseAlpha x || isUpperCaseAlpha x
+
+toUpper :: Char -> Char
+toUpper x
+    | isLowerCaseAlpha x = toEnum ((fromEnum x) - 32)
+    | isUpperCaseAlpha x = x
+    | otherwise = error "Character is not alphabetical character"
+
+capitalise :: String -> String
+capitalise s = [toUpper c | c <- s, isAlphabet c] 
+
+prop_capitalise_0 =
+    capitalise "some" == "SOME"
+
+prop_capitalise_1 =
+    capitalise "14124some141241" == "SOME"
+
+prop_capitalise_2 =
+    capitalise "S1O2M3E4" == "SOME"
+
+prop_capitalise_3 =
+    capitalise "someS1O2M3E4" == "SOMESOME"
+
+prop_capitalise_4 =
+    capitalise "s" == "S"
+
+prop_capitalise_5 =
+    capitalise "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" == "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_average_0
@@ -276,5 +313,13 @@ main = do
     quickCheck prop_permut_7
     quickCheck prop_permut_8
     quickCheck prop_permut_9
+    
+    -- Exercise 5 tests
+    quickCheck prop_capitalise_0
+    quickCheck prop_capitalise_1
+    quickCheck prop_capitalise_2
+    quickCheck prop_capitalise_3
+    quickCheck prop_capitalise_4
+    quickCheck prop_capitalise_5
 
     putStrLn (show (substring "" "ome"))
