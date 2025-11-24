@@ -51,7 +51,7 @@ prop_divides0_2 =
 divides1 :: Integer -> [Integer]
 divides1 x 
     | x <= 0 = error "Number could not be less or equal to 0"    
-    | otherwise = [n | n <- [1..x], (x `mod` n == 0)] 
+    | otherwise = [n | n <- [1..(x/2)], (x `mod` n == 0)] ++ [x]
 
 prop_divides1_0 =
     divides0 24 == [1, 2, 3, 4, 6, 8, 12, 24]
@@ -301,9 +301,11 @@ prop_itemTotal_5 =
 itemDiscount :: String -> Integer -> [(String,Float)] -> [(String,Float)]
 itemDiscount _ _ [] = []
 itemDiscount item disc [(y0, p0)]
+    | disc > 100 || disc < 0 = error "Discount is incorrect"   
     | item == y0 = [(y0, p0 * (fromIntegral disc / 100))]
     | otherwise = [(y0, p0)]
 itemDiscount item disc ((y0, p0):xs)
+    | disc > 100 || disc < 0 = error "Discount is incorrect"   
     | item == y0 = (y0, p0 * (fromIntegral disc / 100)):(itemDiscount item disc xs)
     | otherwise = (y0, p0):(itemDiscount item disc xs)
 
@@ -324,6 +326,9 @@ prop_itemDiscount_4 =
 
 prop_itemDiscount_5 =
     itemDiscount "a" 20 [("c", 100), ("a", 2), ("b", 100)] == [("c", 100), ("a", 0.4), ("b", 100)] 
+
+prop_itemDiscount_6 =
+    itemDiscount "a" 110 [("a", 2), ("b", 100)] == [("a", 2), ("b", 100)] 
 
 main = do
     -- Exercise 1 tests
@@ -414,3 +419,4 @@ main = do
     quickCheck prop_itemDiscount_3
     quickCheck prop_itemDiscount_4
     quickCheck prop_itemDiscount_5
+    -- quickCheck prop_itemDiscount_6
