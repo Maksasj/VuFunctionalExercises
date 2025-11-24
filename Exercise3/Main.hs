@@ -110,6 +110,23 @@ total predicate n = foldl pr 0 [0, n]
         pr :: Integer -> Integer -> Integer
         pr a b = b + (predicate a)
 
+-- Exercise 7
+-- f ::a -> a
+
+iter0 :: Int -> (a -> a) -> (a -> a)
+iter0 n f
+  | n <= 0 = (\x -> x)
+  | otherwise = f . iter0 (n-1) f
+
+iter1 :: Int -> (a -> a) -> (a -> a)
+iter1 n f
+  | n <= 0 = (\x -> x)
+  | otherwise = foldr (.) id (replicate (n) f)
+
+-- Exercise 8
+splits :: [a] -> [([a],[a])]
+splits xs = [ (take i xs, drop i xs) | i <- [0 .. length xs] ]
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_isRound_Circle_0 
