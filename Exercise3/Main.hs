@@ -52,6 +52,64 @@ prop_isRound_Circle_0 r x y =
 prop_isRound_Rectangle_0 w h x y =
     (isRound (Rectangle w h (Coordinates x y))) == False
 
+-- Exercise 2
+any0 :: (a->Bool) -> [a] -> Bool
+any0 _ [] = False
+any0 predicate (x:xs) = predicate x || any0 predicate xs
+
+all0 :: (a->Bool) -> [a] -> Bool
+all0 _ [] = True
+all0  predicate (x:xs) = predicate x && all0 predicate xs
+
+any1 :: Eq a => (a->Bool) -> [a] -> Bool
+any1 predicate l = (filter predicate l) /= []
+
+all1 :: Eq a => (a->Bool) -> [a] -> Bool
+all1 predicate l = (filter predicate l) == l
+
+any2 :: (a->Bool) -> [a] -> Bool
+any2 predicate l = foldr (||) False (map predicate l)
+
+all2 :: (a->Bool) -> [a] -> Bool
+all2 predicate l = foldr (&&) True (map predicate l)
+
+-- Exercise 3
+unzip :: [(a, b)] -> ([a], [b])
+unzip l = foldr predicate ([], []) l 
+    where 
+        predicate :: (a, b) -> ([a], [b]) -> ([a], [b])
+        predicate (x, y) (l0, l1) = (x:l0, y:l1)
+
+-- Exercise 4
+length0 :: Eq a => [a] -> Int
+length0 [] = 0
+length0 (x:xs) = 1 + length0 xs
+
+length1 :: [a] -> Int
+length1 l = (sum . (map (\_ -> 1))) l
+
+length2 :: [a] -> Int
+length2 l = foldr (\_ ->(\x -> x + 1)) 0 l  
+
+-- Exercise 5
+sumUpToBound :: Integer -> [Integer] -> Integer
+sumUpToBound mv l = foldl predicate 0 l
+    where
+        predicate :: Integer -> Integer -> Integer
+        predicate b0 v
+            | (b0 + v) <= mv = b0 + v
+            | otherwise = b0
+
+ff :: Integer -> [Integer] -> Integer
+ff v l = ((sumUpToBound v) . (map (* 10)) . (filter (>= 0))) l
+
+-- Exercise 6
+total :: (Integer -> Integer) -> Integer -> Integer
+total predicate n = foldl pr 0 [0, n]
+    where
+        pr :: Integer -> Integer -> Integer
+        pr a b = b + (predicate a)
+
 main = do
     -- Exercise 1 tests
     quickCheck prop_isRound_Circle_0 
