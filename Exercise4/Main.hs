@@ -60,6 +60,30 @@ prop_mapTree_3 =
     mapTree id (Gnode [] :: GTree Integer) == Gnode []
 
 -- Exercise 2
+data Expr a = Lit a | EVar Var | Op (Ops a) [Expr a]
+type Ops a = [a] -> a
+type Var = Char
+
+type Valuation a = Var -> a
+
+eval :: Valuation a -> Expr a -> a
+eval _ (Lit x) = x
+eval valuation (EVar v) = valuation v
+eval valuation (Op f exprs) = f (map (eval valuation) exprs)
+
+val 'x' = 2; val 'y' = 5
+
+prop_eval_0 = 
+    eval val (Lit 10) == 10
+
+prop_eval_1 = 
+    eval val (EVar 'x') == 2
+
+prop_eval_2 = 
+    eval val (Op sum [EVar 'x', Lit 5, EVar 'y']) == 12
+
+prop_eval_3 = 
+    eval val (Op product [EVar 'y', Op sum [EVar 'x', Lit 3]]) == 25
 
 -- Exercise 3
 
@@ -71,6 +95,7 @@ prop_mapTree_3 =
 
 
 main = do
+    -- Exercise 1
     quickCheck prop_depth_0
     quickCheck prop_depth_1
     quickCheck prop_depth_2
@@ -85,3 +110,10 @@ main = do
     quickCheck prop_mapTree_1
     quickCheck prop_mapTree_2
     quickCheck prop_mapTree_3
+
+    -- Exercise 2
+    quickCheck prop_eval_0
+    quickCheck prop_eval_1
+    quickCheck prop_eval_2
+    quickCheck prop_eval_3
+
