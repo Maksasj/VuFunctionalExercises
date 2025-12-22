@@ -205,6 +205,28 @@ prop_goldbach_3 =
     goldbach 2 == True
 
 -- Exercise 6
+data Stream a = Cons a (Stream a)
+
+streamToList :: Stream a -> [a]
+streamToList (Cons x xs) = x : streamToList xs
+
+streamIterate :: (a -> a) -> a -> Stream a
+streamIterate f seed = Cons seed (streamIterate f (f seed))
+
+streamInterleave :: Stream a -> Stream a -> Stream a
+streamInterleave (Cons x xs) ys = Cons x (streamInterleave ys xs)
+
+takeS :: Int -> Stream a -> [a]
+takeS n s = take n (streamToList s)
+
+prop_stream_0 = takeS 5 (streamIterate (*2) 1) == [1, 2, 4, 8, 16]
+
+prop_stream_1 = 
+    let s1 = streamIterate id 1
+        s2 = streamIterate id 2
+    in takeS 6 (streamInterleave s1 s2) == [1, 2, 1, 2, 1, 2]
+
+prop_stream_2 = head (streamToList (Cons 100 (streamIterate id 0))) == 100
 
 main = do
     -- Exercise 1
@@ -253,3 +275,8 @@ main = do
     quickCheck prop_goldbach_1
     quickCheck prop_goldbach_2
     quickCheck prop_goldbach_3
+
+    -- Exercise 6
+    quickCheck prop_stream_0
+    quickCheck prop_stream_1
+    quickCheck prop_stream_2
