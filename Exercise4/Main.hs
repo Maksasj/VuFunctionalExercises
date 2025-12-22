@@ -148,6 +148,33 @@ prop_plus_4 =
     plus (char 'a') "ab" == False
 
 -- Exercise 4
+data Result a = OK a | Error String
+  deriving (Show, Eq)
+
+composeResult :: (a -> Result b) -> (b -> Result c) -> (a -> Result c)
+composeResult f g = \x -> case f x of
+    Error msg -> Error msg
+    OK result -> g result
+
+checkPositive :: Int -> Result Int
+checkPositive n | n >= 0    = OK n
+                | otherwise = Error "Not positive"
+
+addOne :: Int -> Result Int
+addOne n = OK (n + 1)
+
+prop_composeResult_0 = 
+    composeResult checkPositive addOne 5 == OK 6
+
+prop_composeResult_1 = 
+    composeResult checkPositive addOne (-1) == Error "Not positive"
+
+limitValue :: Int -> Result Int
+limitValue n | n < 10    = OK n
+             | otherwise = Error "Too large"
+
+prop_composeResult_2 = 
+    composeResult addOne limitValue 9 == Error "Too large"
 
 -- Exercise 5
 
@@ -190,3 +217,7 @@ main = do
     quickCheck prop_plus_3
     quickCheck prop_plus_4
 
+    -- Exercise 4
+    quickCheck prop_composeResult_0
+    quickCheck prop_composeResult_1
+    quickCheck prop_composeResult_2
