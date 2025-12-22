@@ -1,6 +1,7 @@
 module Main where
 
 import Test.QuickCheck;
+import Prelude hiding ((<*>));
 
 -- Exercise 1
 data GTree a = Leaf a | Gnode [GTree a]
@@ -86,13 +87,71 @@ prop_eval_3 =
     eval val (Op product [EVar 'y', Op sum [EVar 'x', Lit 3]]) == 25
 
 -- Exercise 3
+type RegExp = String -> Bool
+
+epsilon :: RegExp
+epsilon = (=="")
+
+char :: Char -> RegExp
+char ch = (==[ch])
+
+(|||) :: RegExp -> RegExp -> RegExp
+e1 ||| e2 = \x -> e1 x || e2 x
+
+splits :: String -> [(String, String)]
+splits xs = [splitAt n xs | n <- [0 .. length xs]]
+
+(<*>) :: RegExp -> RegExp -> RegExp
+e1 <*> e2 = \x ->
+    or [e1 y && e2 z | (y,z) <- splits x]
+
+star :: RegExp -> RegExp
+star p = epsilon ||| (p <*> star p)
+
+option :: RegExp -> RegExp
+option p = p ||| epsilon
+
+plus :: RegExp -> RegExp
+plus p = p <*> star p
+
+prop_option_0 =
+    option (char 'a') "" == True
+
+prop_option_1 =
+    option (char 'a') "a" == True
+
+prop_option_2 =
+    option (char 'a') "" == True
+
+prop_option_3 =
+    option (char 'a') "aa" == False
+
+prop_option_4 =
+    option (char 'a') "b" == False
+
+prop_option_5 =
+    option (char 'b') "bab" == False
+
+prop_plus_0 = 
+    plus (char 'a') "" == False
+
+prop_plus_1 = 
+    plus (char 'a') "a" == True
+
+prop_plus_2 = 
+    plus (char 'a') "aaa" == True
+
+prop_plus_3 = 
+    plus (char 'a') "" == False
+
+prop_plus_4 = 
+    plus (char 'a') "ab" == False
 
 -- Exercise 4
 
 -- Exercise 5
 
 -- Exercise 6
-
 
 main = do
     -- Exercise 1
@@ -116,4 +175,18 @@ main = do
     quickCheck prop_eval_1
     quickCheck prop_eval_2
     quickCheck prop_eval_3
+
+    -- Exercise 3
+    quickCheck prop_option_0
+    quickCheck prop_option_1
+    quickCheck prop_option_2
+    quickCheck prop_option_3
+    quickCheck prop_option_4
+    quickCheck prop_option_5
+
+    quickCheck prop_plus_0
+    quickCheck prop_plus_1
+    quickCheck prop_plus_2
+    quickCheck prop_plus_3
+    quickCheck prop_plus_4
 
