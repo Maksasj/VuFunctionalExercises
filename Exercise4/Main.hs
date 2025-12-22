@@ -148,19 +148,19 @@ prop_plus_4 =
     plus (char 'a') "ab" == False
 
 -- Exercise 4
-data Result a = OK a | Error String
+data ResultM a = OK a | Error String
   deriving (Show, Eq)
 
-composeResult :: (a -> Result b) -> (b -> Result c) -> (a -> Result c)
+composeResult :: (a -> ResultM b) -> (b -> ResultM c) -> (a -> ResultM c)
 composeResult f g = \x -> case f x of
     Error msg -> Error msg
     OK result -> g result
 
-checkPositive :: Int -> Result Int
+checkPositive :: Int -> ResultM Int
 checkPositive n | n >= 0    = OK n
                 | otherwise = Error "Not positive"
 
-addOne :: Int -> Result Int
+addOne :: Int -> ResultM Int
 addOne n = OK (n + 1)
 
 prop_composeResult_0 = 
@@ -169,7 +169,7 @@ prop_composeResult_0 =
 prop_composeResult_1 = 
     composeResult checkPositive addOne (-1) == Error "Not positive"
 
-limitValue :: Int -> Result Int
+limitValue :: Int -> ResultM Int
 limitValue n | n < 10    = OK n
              | otherwise = Error "Too large"
 
@@ -177,6 +177,32 @@ prop_composeResult_2 =
     composeResult addOne limitValue 9 == Error "Too large"
 
 -- Exercise 5
+primes :: [Integer]
+primes = sieve [2 ..]
+
+sieve (x:xs) =
+    x : sieve [y | y <- xs, y `mod` x > 0]
+
+goldbach :: Integer -> Bool
+goldbach n = and [ isSumOfTwoPrimes k | k <- evens ]
+  where
+    evens = [4, 6 .. n]
+    
+    isSumOfTwoPrimes k = not (null [ (p1, p2) | p1 <- ps, p2 <- ps, p1 + p2 == k ])
+      where 
+        ps = takeWhile (< k) primes
+
+prop_goldbach_0 = 
+    goldbach 4 == True
+
+prop_goldbach_1 = 
+    goldbach 10 == True
+
+prop_goldbach_2 = 
+    goldbach 20 == True
+
+prop_goldbach_3 = 
+    goldbach 2 == True
 
 -- Exercise 6
 
@@ -221,3 +247,9 @@ main = do
     quickCheck prop_composeResult_0
     quickCheck prop_composeResult_1
     quickCheck prop_composeResult_2
+
+    -- Exercise 5
+    quickCheck prop_goldbach_0
+    quickCheck prop_goldbach_1
+    quickCheck prop_goldbach_2
+    quickCheck prop_goldbach_3
