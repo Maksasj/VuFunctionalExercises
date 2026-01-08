@@ -71,7 +71,7 @@ any2 :: (a->Bool) -> [a] -> Bool
 any2 predicate l = foldr (||) False (map predicate l)
 
 all2 :: (a->Bool) -> [a] -> Bool
-all2 predicate l = foldr (&&) True (map predicate l)
+all2 predicate l = foldr (\y x -> predicate x && y) True l
 
 -- Exercise 3
 unzip :: [(a, b)] -> ([a], [b])
@@ -105,22 +105,21 @@ ff v l = ((sumUpToBound v) . (map (* 10)) . (filter (>= 0))) l
 
 -- Exercise 6
 total :: (Integer -> Integer) -> Integer -> Integer
-total predicate n = foldl pr 0 [0, n]
+total predicate n = foldl pr 0 [0..n]
     where
         pr :: Integer -> Integer -> Integer
         pr a b = b + (predicate a)
 
 -- Exercise 7
 -- f ::a -> a
-
 iter0 :: Int -> (a -> a) -> (a -> a)
 iter0 n f
-  | n <= 0 = (\x -> x)
+  | n <= 0 = id
   | otherwise = f . iter0 (n-1) f
 
 iter1 :: Int -> (a -> a) -> (a -> a)
 iter1 n f
-  | n <= 0 = (\x -> x)
+  | n <= 0 = id
   | otherwise = foldr (.) id (replicate (n) f)
 
 -- Exercise 8
