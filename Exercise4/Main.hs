@@ -199,7 +199,7 @@ prop_goldbach_1 =
     goldbach 10 == True
 
 prop_goldbach_2 = 
-    goldbach 20 == True
+    goldbach 5000 == True
 
 prop_goldbach_3 = 
     goldbach 2 == True
@@ -215,6 +215,7 @@ streamIterate f seed = Cons seed (streamIterate f (f seed))
 
 streamInterleave :: Stream a -> Stream a -> Stream a
 streamInterleave (Cons x xs) ys = Cons x (streamInterleave ys xs)
+-- streamInterleave (Cons x xs) (Cons y ys) = Cons x ( Cons y (streamInterleave xs ys))
 
 takeS :: Int -> Stream a -> [a]
 takeS n s = take n (streamToList s)
