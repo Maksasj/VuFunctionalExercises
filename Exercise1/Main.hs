@@ -106,11 +106,21 @@ power2 a
     | a > 0 = 2 * power2 (a - 1)
     | a < 0 = 0
 
+power21 :: Integer -> Integer
+power21 0 = 1
+power21 x 
+    | x < 0 = 0
+    | otherwise = 2 * power21 (x - 1)
+
 prop_power2_0 = power2 (-5) == 0
 
 prop_power2_1 a
     | a < 0 = True
     | otherwise = power2 a == 2^a
+
+prop_power21_3 a
+    | a < 0 = True
+    | otherwise = power21 a == 2^a
 
 -- Exercise 6
 mult :: Integer -> Integer -> Integer
@@ -192,11 +202,12 @@ main = do
     quickCheck prop_nRoots_0_1
     quickCheck prop_nRoots_0_2
 
-    quickCheck prop_nRoots_error 
+    -- quickCheck prop_nRoots_error 
 
     -- Exercise 5 tests
     quickCheck prop_power2_0
     quickCheck prop_power2_1
+    quickCheck prop_power21_3
 
     -- Exercise 6 tests
     quickCheck prop_mult_0

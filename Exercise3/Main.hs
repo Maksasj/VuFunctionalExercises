@@ -70,8 +70,8 @@ all1 predicate l = (filter predicate l) == l
 any2 :: (a->Bool) -> [a] -> Bool
 any2 predicate l = foldr (||) False (map predicate l)
 
-all2 :: (a->Bool) -> [a] -> Bool
-all2 predicate l = foldr (\y x -> predicate x && y) True l
+-- all2 :: (a->Bool) -> [a] -> Bool
+-- all2 predicate l = foldr (\y x -> ((predicate x) && y)) True l
 
 -- Exercise 3
 unzip :: [(a, b)] -> ([a], [b])
@@ -90,6 +90,12 @@ length1 l = (sum . (map (\_ -> 1))) l
 
 length2 :: [a] -> Int
 length2 l = foldr (\_ ->(\x -> x + 1)) 0 l  
+
+length3 :: [a] -> Int
+length3 l = ((foldr (+) 0) . (map (\_ -> 1))) l
+
+prop_length_3 =
+    length [1..26] == length3 [1..26]
 
 -- Exercise 5
 sumUpToBound :: Integer -> [Integer] -> Integer
@@ -130,3 +136,5 @@ main = do
     -- Exercise 1 tests
     quickCheck prop_isRound_Circle_0 
     quickCheck prop_isRound_Rectangle_0
+
+    quickCheck prop_length_3
